@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Image from "next/image";
 import Navbar2 from "./Navbar2";
 import { RiShoppingBag3Fill } from "react-icons/ri";
@@ -16,26 +16,20 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import "swiper/css";
-import "swiper/css/navigation";  
+import "swiper/css/navigation";
 import { bestSellers } from "@/server/Data/BestSellers";
 import { newArrivals } from "@/server/Data/NewArrivals";
-import {product} from "@/server/Data/Product";
-import { offers,offers2 } from "@/server/Data/Offers";
-import useCart from '@/store/useCart';
-
+import { product } from "@/server/Data/Product";
+import { offers, offers2 } from "@/server/Data/Offers";
+import useCart from "@/store/useCart";
 
 export default function Home() {
-  const {actions}=useCart();
+  const { actions } = useCart();
   console.log("Added to Cart:", actions);
-  
-    const [activeTab, setActiveTab] = useState("bestSellers");
-  
-    const products = activeTab === "bestSellers" ? bestSellers : newArrivals;
-    function handleClickAdd (product){
-      actions.addToBasket(product)
-      console.log("Added:", product)
-    }
-    
+  const [activeTab, setActiveTab] = useState("bestSellers");
+
+  const products = activeTab === "bestSellers" ? bestSellers : newArrivals;
+
   return (
     <div>
       <section>
@@ -262,7 +256,7 @@ export default function Home() {
                       <CiHeart size={20} />
                     </button>
                     <button
-                      onClick={ handleClickAdd}
+                      onClick={() => actions.addToBasket(products)}
                       className="bg-white p-2 rounded-full w-14 h-14 flex justify-center items-center shadow-md opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:shadow-xl delay-500"
                     >
                       <FiShoppingBag size={20} />
@@ -559,3 +553,6 @@ export default function Home() {
     </div>
   );
 }
+
+
+
