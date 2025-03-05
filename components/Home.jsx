@@ -14,7 +14,6 @@ import { FiShoppingBag, FiEye } from "react-icons/fi";
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
-import { useRouter } from "next/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
 import { bestSellers } from "@/server/Data/BestSellers";
@@ -22,10 +21,51 @@ import { newArrivals } from "@/server/Data/NewArrivals";
 import { product } from "@/server/Data/Product";
 import { offers, offers2 } from "@/server/Data/Offers";
 import useCart from "@/store/useCart";
+import { motion } from "framer-motion";
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+  },
+};
+const fadeIndown = {
+  hidden: { opacity: 0, y: -20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+  },
+};
+
+const slideInFromRight = {
+  hidden: { opacity: 0, x: 100 },
+  visible: (custom) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15,
+      delay: custom * 0.1,
+    },
+  }),
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
 
 export default function Home() {
+  const persianNumbers = ["02", "03", "05", "03", "08", "04"];
+
   const { actions } = useCart();
-  console.log("Added to Cart:", actions);
   const [activeTab, setActiveTab] = useState("bestSellers");
 
   const products = activeTab === "bestSellers" ? bestSellers : newArrivals;
@@ -33,9 +73,24 @@ export default function Home() {
   return (
     <div>
       <section>
-        <div className="w-screen overflow-x-hidden h-[1050px] bg-blue-50 text-white relative z-20">
-          <Navbar2 className="absolute bg-blue-50 top-20 w-full z-50" />
-          <div className="absolute inset-0 flex justify-end">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          className="w-screen overflow-x-hidden h-[1050px] bg-blue-50 text-white relative z-20"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0 }}
+          >
+            <Navbar2 className="absolute bg-blue-50 top-20 w-full z-50" />
+          </motion.div>
+          <motion.div
+            variants={fadeInUp}
+            transition={{ duration: 0.6 , delay: 1 }}
+            className="absolute inset-0 flex justify-end"
+          >
+            {" "}
             <Image
               src="/images/bg.jpg"
               width={1000}
@@ -43,51 +98,95 @@ export default function Home() {
               className="h-full w-[600px] z-10 object-cover"
               alt="Background"
             />
-          </div>
-
-          <Image
-            src="/images/mobl.webp"
-            width={1000}
-            height={1000}
-            className="h-[800px] absolute w-[1700px] top-60  -right-[800px] z-30"
-            alt="Mobl"
-          />
-
-          <div className="absolute z-20 top-96 left-[25%] text-black">
+          </motion.div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, x: 200 },
+              visible: {
+                opacity: 1,
+                x: 0,
+                transition: {
+                  type: "spring",
+                  stiffness: 70,
+                  damping: 20,
+                  duration: 0.6,
+                  delay: 1.5,
+                },
+              },
+            }}
+          >
+            {" "}
+            <Image
+              src="/images/mobl.webp"
+              width={1000}
+              height={1000}
+              className="h-[800px] absolute w-[1700px] top-60 -right-[800px] z-30"
+              alt="Mobl"
+            />
+          </motion.div>
+          <motion.div
+            variants={fadeInUp}
+            transition={{ duration: 0.6, delay: 2 }}
+            className="absolute z-20 top-96 left-[25%] text-black"
+          >
+            {" "}
             <h1 className="text-9xl font-bold">Corby</h1>
             <h1 className="text-9xl font-bold">Sofas</h1>
             <p className="text-4xl opacity-55 pt-10">
               Price starting from
               <span className="text-black underline "> $199.00</span>
             </p>
-
-            <button className="w-48 flex items-center justify-center gap-2 text-white text-lg p-4 rounded-full bg-blue-950 hover:shadow-2xl mt-10 transition">
+            <motion.button
+              variants={fadeInUp}
+              transition={{ duration: 0.6, delay: 2.5 }}
+              className="w-48 flex items-center justify-center gap-2 text-white text-lg p-4 rounded-full bg-blue-950 hover:shadow-2xl mt-10 transition"
+            >
+              {" "}
               <RiShoppingBag3Fill />
               SHOP NOW
-            </button>
-          </div>
-
-          <div className="-rotate-90 fixed -left-32 z-[9999] top-[500px] text-black flex items-center space-x-6">
+            </motion.button>
+          </motion.div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  delay: 0.6,
+                  duration: 0.6,
+                },
+              },
+            }}
+            className="-rotate-90 fixed -left-32 top-[500px] text-black flex items-center space-x-6 z-[9999]"
+            style={{ pointerEvents: "none" }} 
+          >
             {[
               { icon: <FaFacebookF />, label: "Facebook" },
               { icon: <FaDribbble />, label: "Dribbble" },
               { icon: <FaTwitter />, label: "Twitter" },
               { icon: <FaInstagram />, label: "Instagram" },
             ].map(({ icon, label }, index) => (
-              <span key={index} className="flex items-center z-[9999] gap-x-2">
+              <motion.span
+                key={index}
+                className="flex items-center gap-x-2 cursor-pointer"
+                style={{ pointerEvents: "auto" }}
+              >
                 {icon} {label}
-              </span>
+              </motion.span>
             ))}
-          </div>
-
-          <div className="absolute top-[870px] left-72 flex">
+          </motion.div>
+          <motion.div
+            variants={fadeInUp}
+            transition={{ duration: 0.6, delay: 3 }}
+            className="absolute top-[870px] left-72 flex"
+          >
+            {" "}
             <div className="relative w-44 h-44 bg-slate-200 flex items-center justify-center text-4xl font-bold overflow-hidden group">
               <span className="absolute inset-0 bg-black scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-700"></span>
               <span className="relative z-10 group-hover:text-white text-black transition-colors duration-700">
                 Next
               </span>
             </div>
-
             <Image
               src="/images/Next.jpg"
               width={1000}
@@ -95,19 +194,39 @@ export default function Home() {
               className="h-44 w-60 object-cover  bg-slate-200"
               alt="Next"
             />
-          </div>
-          <div className="bg-white w-[900px] h-[900px] rounded-full absolute top-32  right-60"></div>
-        </div>
+          </motion.div>
+          <motion.div
+            variants={fadeInUp}
+            transition={{ duration: 0.6, delay: 1.5 }}
+            className="bg-white w-[900px] h-[900px] rounded-full absolute top-32 right-60"
+          ></motion.div>{" "}
+        </motion.div>
       </section>
       <section>
-        <div className="container mx-auto flex flex-row items-center justify-center pt-20">
-          <div className="text-black justify-start items-start flex flex-col gap-2 pr-20">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={staggerContainer}
+          className="container mx-auto flex flex-row items-center justify-center pt-20"
+        >
+          <motion.div
+            variants={fadeInUp}
+            className="text-black justify-start items-start flex flex-col gap-2 pr-20"
+          >
             <span className="text-xl">❤ on demand</span>
             <span className="text-4xl font-bold ">Featured</span>
             <span className="text-4xl font-bold">categories</span>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-wrap justify-center gap-x-28 font-bold text-black">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            className="flex flex-wrap justify-center gap-x-28 font-bold text-black"
+          >
+            {" "}
             {[
               { src: "/images/icons/1.webp", label: "lamp" },
               { src: "/images/icons/2.webp", label: "stool" },
@@ -116,24 +235,57 @@ export default function Home() {
               { src: "/images/icons/5.webp", label: "light" },
               { src: "/images/icons/6.webp", label: "sofa" },
             ].map((item, index) => (
-              <div key={index} className="text-center">
+              <motion.div
+                key={index}
+                variants={slideInFromRight}
+                className="text-center relative group"
+              >
+                {" "}
+                <div
+                  className="absolute -top-2  -right-2 w-10 h-10 bg-blue-950 rounded-full z-40 opacity-0 
+                        flex items-center justify-center text-white text-sm
+                        transform scale-0 group-hover:scale-100 group-hover:opacity-100
+                        transition-all duration-300"
+                >
+                  {persianNumbers[index]}
+                </div>
                 <Image
                   src={item.src}
                   alt={item.label}
                   width={1000}
                   height={1000}
-                  className="w-20 h-20 object-contain"
+                  className="w-20 h-20 object-contain group-hover:-translate-y-1 transition-transform duration-300 hover:opacity-60 "
                 />
-                <p className="mt-2">{item.label}</p>
-              </div>
+                <div className="mt-2 relative inline-block">
+                  <p className="group-hover:-translate-y-1 transition-transform duration-300">
+                    {item.label}
+                  </p>
+
+                  <span
+                    className="absolute bottom-0 left-0 w-0 h-0.5 bg-black 
+                          group-hover:w-full transition-all duration-300 
+                          group-hover:opacity-70"
+                  ></span>
+                </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
-        <div className="container mx-auto flex justify-center p-20">
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={staggerContainer}
+          className="container mx-auto flex justify-center p-20"
+        >
+          {" "}
           <div className="grid grid-cols-2 gap-4 items-center">
-            <div className="relative">
+            <motion.div variants={fadeInUp} className="relative">
+              {" "}
               <Image
                 src="/images/photo/1.jpg"
+                alt="picture"
                 width={1000}
                 height={1000}
                 className="w-full h-auto object-cover"
@@ -148,52 +300,63 @@ export default function Home() {
               >
                 Explore category
               </Link>
-            </div>
+            </motion.div>
 
             <div className="grid grid-rows-2 gap-4">
-              <div className="relative">
+              <motion.div variants={fadeInUp} className="relative">
+                {" "}
                 <Image
                   src="/images/photo/2.jpg"
+                  alt="picture2"
                   width={1000}
                   height={1000}
                   className="w-full h-auto object-cover"
                 />
-                <h1 className="absolute bottom-40 left-20 flex flex-col items-center justify-center text-black text-5xl">
+                <h1 className="absolute bottom-32 left-16 flex flex-col items-start justify-start text-black text-4xl">
                   Pottery{" "}
-                  <span className="block text-5xl font-bold">products</span>
+                  <span className="block text-4xl font-bold">products</span>
                 </h1>
                 <Link
                   href="/"
-                  className="absolute bottom-20 left-40 transform -translate-x-1/2 text-white bg-black px-4 py-2 rounded"
+                  className="absolute bottom-16 left-[140px] transform -translate-x-1/2 text-white bg-black px-4 py-2 rounded"
                 >
                   Explore category
                 </Link>
-              </div>
+              </motion.div>
 
-              <div className="relative">
+              <motion.div variants={fadeInUp} className="relative">
+                {" "}
                 <Image
                   src="/images/photo/3.jpg"
+                  alt="hi"
                   width={1000}
                   height={1000}
                   className="w-full h-auto object-cover"
                 />
-                <h1 className="absolute bottom-40 left-20 flex flex-col items-center justify-center text-black text-5xl">
+                <h1 className="absolute bottom-32 right-20 flex flex-col items-start justify-start text-black text-4xl">
                   Florence{" "}
-                  <span className="block text-5xl font-bold">compact</span>
+                  <span className="block text-4xl font-bold">compact</span>
                 </h1>
                 <Link
                   href="/"
-                  className="absolute bottom-20 left-40 transform -translate-x-1/2 text-white bg-black px-4 py-2 rounded"
+                  className="absolute bottom-16 right-0 transform -translate-x-1/2 text-white bg-black px-4 py-2 rounded"
                 >
                   Explore category
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
       <section>
-        <div className="flex justify-center items-center">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={fadeInUp}
+          className="flex justify-center items-center"
+        >
+          {" "}
           <ul className="flex space-x-10">
             <li>
               <button
@@ -230,13 +393,22 @@ export default function Home() {
               </button>
             </li>
           </ul>
-        </div>
+        </motion.div>
 
-        <div className="container mx-auto py-10">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={staggerContainer}
+          className="container mx-auto py-10"
+        >
+          {" "}
           <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <li
+            {products.map((product, index) => (
+              <motion.li
                 key={product.id}
+                variants={fadeInUp}
+                custom={index}
                 className="bg-white hover:shadow-xl rounded-xl overflow-hidden p-4 relative group transition-all duration-300"
               >
                 <div className="relative">
@@ -283,12 +455,18 @@ export default function Home() {
                     <span className="text-xl font-bold">${product.price}</span>
                   </div>
                 </div>
-              </li>
+              </motion.li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       </section>
-      <section>
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={fadeInUp}
+      >
+        {" "}
         <div className="relative w-full  py-5 overflow-hidden">
           <div
             className="absolute top-0 left-0 w-1/12 h-full   z-50 "
@@ -343,9 +521,16 @@ export default function Home() {
             ))}
           </Swiper>
         </div>
-      </section>
-      <section className="flex flex-col lg:flex-row w-full  gap-6 p-6">
-        <div className="relative w-2/3  h-[500px]">
+      </motion.section>
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={staggerContainer}
+        className="flex flex-col lg:flex-row w-full gap-6 p-6"
+      >
+        {" "}
+        <motion.div variants={fadeInUp} className="relative w-2/3 h-[500px]">
           <Image
             src="/images/swiper/1.jpg"
             layout="fill"
@@ -368,9 +553,9 @@ export default function Home() {
               Explore category
             </Link>
           </div>
-        </div>
-
-        <div className=" w-1/3">
+        </motion.div>
+        <motion.div variants={fadeInUp} className="w-1/3">
+          {" "}
           <Swiper
             modules={[Navigation, Autoplay]}
             spaceBetween={20}
@@ -407,9 +592,16 @@ export default function Home() {
               </SwiperSlide>
             ))}
           </Swiper>
-        </div>
-      </section>
-      <section>
+        </motion.div>
+      </motion.section>
+
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={fadeInUp}
+      >
+        {" "}
         <div className="relative w-full  py-5 overflow-hidden">
           <div
             className="absolute top-0 left-0 w-1/12 h-full   z-50 "
@@ -461,98 +653,224 @@ export default function Home() {
             ))}
           </Swiper>
         </div>
-      </section>
-      {/* <section>
-        <div>
-          <div>
-            <span>Designers ideas</span>
-            <h4>The decor article</h4>
+      </motion.section>
+      <section className="py-16 md:py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <span className="text-sm uppercase tracking-wider text-gray-500 font-medium mb-2 block">
+              Designers ideas
+            </span>
+            <h4 className="text-3xl md:text-4xl font-semibold text-gray-900">
+              The decor article
+            </h4>
           </div>
-          <div>
-            <ul>
-              <li>
-                <div>
+          <div className="max-w-7xl mx-auto">
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <li className="group">
+                <div className="relative h-64 mb-4 overflow-hidden rounded-lg">
                   <Image
                     src="/images/article/1.jpg"
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-lg"
-                    alt="1"
+                    className="rounded-lg transition-transform duration-500 group-hover:scale-110"
+                    alt="Decor article"
                   />
                 </div>
-                <div>
-                  <span>
-                    {" "}
-                    <a href="">DECOR</a>
-                    <a href="">08 AUGUST 2023</a>
+                <div className="px-1">
+                  <span className="flex items-center gap-3 text-xs uppercase tracking-wider mb-2">
+                    <a href="#" className="text-gray-900 font-medium ">
+                      DECOR
+                    </a>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <a href="#" className="text-gray-500 hover:text-black ">
+                      08 AUGUST 2023
+                    </a>
                   </span>
-                  <a>The best influencers to fllow for sartorial inspiration</a>
+                  <a
+                    href="#"
+                    className="text-base font-medium text-gray-900  transition-colors"
+                  >
+                    The best influencers to follow for sartorial inspiration
+                  </a>
                 </div>
               </li>
-              <li>
-                <div>
+
+              <li className="group">
+                <div className="relative h-64 mb-4 overflow-hidden rounded-lg">
                   <Image
                     src="/images/article/2.jpg"
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-lg"
-                    alt="1"
+                    className="rounded-lg transition-transform duration-500 group-hover:scale-110"
+                    alt="Design article"
                   />
                 </div>
-                <div>
-                  <span>
-                    {" "}
-                    <a href="">DESIGN</a>
-                    <a href="">12 AUGUST 2023</a>
+                <div className="px-1">
+                  <span className="flex items-center gap-3 text-xs uppercase tracking-wider mb-2">
+                    <a href="#" className="text-gray-900 font-medium ">
+                      DESIGN
+                    </a>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <a href="#" className="text-gray-500 hover:text-black ">
+                      12 AUGUST 2023
+                    </a>
                   </span>
-                  <a>Everything you need to know about decor's big night out</a>
+                  <a
+                    href="#"
+                    className="text-base font-medium text-gray-900  transition-colors"
+                  >
+                    Everything you need to know about decor's big night out
+                  </a>
                 </div>
               </li>
-              <li>
-                <div>
+
+              <li className="group">
+                <div className="relative h-64 mb-4 overflow-hidden rounded-lg">
                   <Image
                     src="/images/article/3.jpg"
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-lg"
-                    alt="1"
+                    className="rounded-lg transition-transform duration-500 group-hover:scale-110"
+                    alt="Decor article"
                   />
                 </div>
-                <div>
-                  <span>
-                    {" "}
-                    <a href="">DECOR</a>
-                    <a href="">20 UGUST 2023</a>
+                <div className="px-1">
+                  <span className="flex items-center gap-3 text-xs uppercase tracking-wider mb-2">
+                    <a href="#" className="text-gray-900 font-medium ">
+                      DECOR
+                    </a>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <a href="#" className="text-gray-500 hover:text-black ">
+                      20 AUGUST 2023
+                    </a>
                   </span>
-                  <a>All the best looks & moments from the met gala 2023</a>
+                  <a
+                    href="#"
+                    className="text-base font-medium text-gray-900  transition-colors"
+                  >
+                    All the best looks & moments from the met gala 2023
+                  </a>
                 </div>
               </li>
-              <li>
-                <div>
+
+              <li className="group">
+                <div className="relative h-64 mb-4 overflow-hidden rounded-lg">
                   <Image
                     src="/images/article/4.jpg"
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-lg"
-                    alt="1"
+                    className="rounded-lg transition-transform duration-500 group-hover:scale-110"
+                    alt="Decor article"
                   />
                 </div>
-                <div>
-                  <span>
-                    {" "}
-                    <a href="">DECOR</a>
-                    <a href="">26 AUGUST 2023</a>
+                <div className="px-1">
+                  <span className="flex items-center gap-3 text-xs uppercase tracking-wider mb-2">
+                    <a href="#" className="text-gray-900 font-medium ">
+                      DECOR
+                    </a>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <a href="#" className="text-gray-500 hover:text-black ">
+                      26 AUGUST 2023
+                    </a>
                   </span>
-                  <a>Find a colour palettes that reflects you passion</a>
+                  <a
+                    href="#"
+                    className="text-base font-medium text-gray-900  transition-colors"
+                  >
+                    Find a colour palette that reflects your passion
+                  </a>
                 </div>
               </li>
             </ul>
           </div>
         </div>
-      </section> */}
+      </section>
+
+      <section className="pt-12 bg-white">
+        <div className=" mx-auto ">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ">
+            <div className="flex items-center justify-center border p-10 border-gray-100 ">
+              <div className="mr-4">
+                <Image
+                  src="/images/home-footer/1.webp"
+                  alt="Free shipping"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-gray-900">
+                  Free shipping
+                </span>
+                <span className="text-sm text-gray-500">
+                  Free return & exchange
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center p-10 border border-gray-100 ">
+              <div className="mr-4">
+                <Image
+                  src="/images/home-footer/2.webp"
+                  alt="Store locator"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-gray-900">
+                  Store locator
+                </span>
+                <span className="text-sm text-gray-500">
+                  Find nearest store
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center p-10  border border-gray-100 ">
+              <div className="mr-4">
+                <Image
+                  src="/images/home-footer/3.webp"
+                  alt="Secure payment"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-gray-900">
+                  Secure payment
+                </span>
+                <span className="text-sm text-gray-500">
+                  100% secure method
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center p-10 border border-gray-100  ">
+              <div className="mr-4">
+                <Image
+                  src="/images/home-footer/4.webp"
+                  alt="Online support"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-gray-900">
+                  Online support
+                </span>
+                <span className="text-sm text-gray-500">
+                  24/7 support center
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
-
-
-

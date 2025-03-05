@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { FiShoppingBag, FiTrash2, FiPlus, FiMinus } from "react-icons/fi";
 import Link from "next/link";
-import { IoMdSearch } from "react-icons/io";
 import navItems2 from "@/server/Data/NavItems";
 import SearchModal from "@/components/SearchModal";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
@@ -344,103 +343,106 @@ export default function Navbar() {
         </div>
 
         <div className="relative group">
-      <div
-        className="relative cursor-pointer"
-        onMouseEnter={() => setShowCart(true)}
-        onMouseLeave={() => setShowCart(false)}
-      >
-        <FiShoppingBag className="size-6 text-black transition-transform duration-300 group-hover:scale-110" />
-        {totalItems > 0 && (
-          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-            {totalItems}
-          </span>
-        )}
-      </div>
-      <div className="absolute w-80 max-h-96 overflow-y-auto -right-0 hidden group-hover:flex top-9 bg-white shadow-md p-5 z-[9999] flex-col gap-3 items-center text-center">
-        {items.length === 0 ? (
-          <p className="text-gray-500 py-4">سبد خرید شما خالی است</p>
-        ) : (
-          <>
-            <div className="w-full max-h-40 overflow-y-auto">
-              {items.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-2 border-b">
-                  <div className="flex items-center">
-                    {item.image && (
-                      <Image
-                        src={item.image}
-                        alt={item.name || "محصول"}
-                        width={50}
-                        height={50}
-                        className="object-cover rounded"
-                      />
-                    )}
-                    <div className="ml-2 text-left">
-                      <span className="text-sm">
-                        {item.name 
-                          ? (item.name.length > 15 
-                              ? `${item.name.substring(0, 15)}...` 
-                              : item.name)
-                          : "محصول"}
-                      </span>
-                      <p className="text-xs text-gray-500">
-                        {item.quantity} × ${item.price}
-                      </p>
+          <div
+            className="relative cursor-pointer"
+            onMouseEnter={() => setShowCart(true)}
+            onMouseLeave={() => setShowCart(false)}
+          >
+            <FiShoppingBag className="size-6 text-black transition-transform duration-300 group-hover:scale-110" />
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </div>
+          <div className="absolute w-80 max-h-96 overflow-y-auto -right-0 hidden group-hover:flex top-9 bg-white shadow-md p-5 z-[9999] flex-col gap-3 items-center text-center">
+            {items.length === 0 ? (
+              <p className="text-gray-500 py-4">سبد خرید شما خالی است</p>
+            ) : (
+              <>
+                <div className="w-full max-h-40 overflow-y-auto">
+                  {items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between py-2 border-b"
+                    >
+                      <div className="flex items-center">
+                        {item.image && (
+                          <Image
+                            src={item.image}
+                            alt={item.name || "محصول"}
+                            width={50}
+                            height={50}
+                            className="object-cover rounded"
+                          />
+                        )}
+                        <div className="ml-2 text-left">
+                          <span className="text-sm">
+                            {item.name
+                              ? item.name.length > 15
+                                ? `${item.name.substring(0, 15)}...`
+                                : item.name
+                              : "محصول"}
+                          </span>
+                          <p className="text-xs text-gray-500">
+                            {item.quantity} × ${item.price}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => removeFromBasket(item)}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <FiMinus size={14} />
+                        </button>
+                        <span className="text-sm">{item.quantity}</span>
+                        <button
+                          onClick={() => addToBasket(item)}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <FiPlus size={14} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            for (let i = 0; i < item.quantity; i++) {
+                              removeFromBasket(item);
+                            }
+                          }}
+                          className="text-red-500 hover:text-red-700 ml-2"
+                        >
+                          <FiTrash2 size={16} />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button 
-                      onClick={() => removeFromBasket(item)}
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      <FiMinus size={14} />
-                    </button>
-                    <span className="text-sm">{item.quantity}</span>
-                    <button 
-                      onClick={() => addToBasket(item)}
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      <FiPlus size={14} />
-                    </button>
-                    <button 
-                      onClick={() => {
-                        for (let i = 0; i < item.quantity; i++) {
-                          removeFromBasket(item);
-                        }
-                      }}
-                      className="text-red-500 hover:text-red-700 ml-2"
-                    >
-                      <FiTrash2 size={16} />
-                    </button>
+                  ))}
+                </div>
+
+                <div className="w-full py-3 border-t border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">مجموع:</span>
+                    <span className="font-bold text-black">
+                      ${invoice.totalprice.toFixed(2)}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
-            
-            <div className="w-full py-3 border-t border-gray-200">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">مجموع:</span>
-                <span className="font-bold">${invoice.totalprice.toFixed(2)}</span>
-              </div>
-            </div>
-          </>
-        )}
-        
-        <Link href="/cart" className="w-full">
-          <button className="w-48 absolute top-44 right-6 border-4 p-2 items-center text-center justify-center hover:bg-gray-100 transition">
-            مشاهده سبد خرید
-          </button>
-        </Link>
-        <Link href="/checkout" className="w-full">
-          <button className="w-48 absolute top-60 right-6 border-4 p-2 items-center text-center justify-center hover:bg-gray-700 transition">
-            تسویه حساب
-          </button>
+              </>
+            )}
+
+            <Link href="/cart" className="w-full">
+              <button className="w-48 absolute top-44 right-6 border-4 p-2 items-center text-center justify-center hover:bg-gray-100 transition">
+                مشاهده سبد خرید
+              </button>
+            </Link>
+            <Link href="/checkout" className="w-full">
+              <button className="w-48 absolute top-60 right-6 border-4 p-2 items-center text-center justify-center hover:bg-gray-700 transition">
+                تسویه حساب
+              </button>
             </Link>
           </div>
         </div>
         <span className="text-black">My Account</span>
       </div>
     </div>
-
-       
   );
 }
