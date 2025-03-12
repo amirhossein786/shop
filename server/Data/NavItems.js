@@ -2,7 +2,7 @@ const  navItems2 =[
     {
       id: 1,
       name: "About",
-      path: "/About",
+      path: "/about",
     },
     {
       id: 2,
@@ -17,12 +17,12 @@ const  navItems2 =[
     {
       id: 4,
       name: "Account",
-      path: "/about",
+      path: "/account",
     },
     {
       id: 5,
       name: "Cart",
-      path: "/Cart",
+      path: "/cart",
     },
     {
       id: 6,

@@ -94,7 +94,7 @@ export default function Navbar() {
   return (
     <div
       className={`${
-        isHovered ? "bg-white z-50 border border-b-2 border-t-2" : "bg-blue-50"
+        isHovered ? "bg-white z-50 border border-b-2 border-t-2" : "bg-none"
       } flex transition-colors justify-start absolute items-center text-center  p-5 w-full`}
     >
       <div className="flex justify-start items-center z-20 gap-2">
@@ -121,7 +121,7 @@ export default function Navbar() {
         >
           <li>
             <Link
-              href="/"
+              href="/shop"
               className="text-gray-700 text-2xl group-hover:opacity-50 "
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
@@ -178,7 +178,7 @@ export default function Navbar() {
         <div className="relative group">
           <li>
             <Link
-              href="/"
+              href="/collections"
               className="text-gray-700 text-2xl group-hover:opacity-50"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
@@ -306,7 +306,7 @@ export default function Navbar() {
 
         <li className="group">
           <Link
-            href="/"
+            href="/blog"
             className="text-gray-700 text-2xl group-hover:opacity-50"
           >
             Blog
@@ -314,7 +314,7 @@ export default function Navbar() {
         </li>
         <li className="group">
           <Link
-            href="/"
+            href="/Contact"
             className="text-gray-700 text-2xl group-hover:opacity-50"
           >
             Contact

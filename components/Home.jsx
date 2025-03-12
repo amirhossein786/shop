@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Navbar2 from "./Navbar2";
+import { useState, useEffect } from "react";
 import { RiShoppingBag3Fill } from "react-icons/ri";
 import {
   FaInstagram,
@@ -11,18 +12,16 @@ import {
 import Link from "next/link";
 import { CiHeart } from "react-icons/ci";
 import { FiShoppingBag, FiEye } from "react-icons/fi";
-import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { bestSellers } from "@/server/Data/BestSellers";
-import { newArrivals } from "@/server/Data/NewArrivals";
+import bestSellers from "@/server/Data/BestSellers";
+import newArrivals from "@/server/Data/NewArrivals";
 import { product } from "@/server/Data/Product";
 import { offers, offers2 } from "@/server/Data/Offers";
 import useCart from "@/store/useCart";
-import { motion } from "framer-motion";
-
+import { motion, useScroll, useSpring } from "framer-motion";
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -63,6 +62,28 @@ const staggerContainer = {
 };
 
 export default function Home() {
+  const { scrollYProgress } = useScroll();
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 200) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const persianNumbers = ["02", "03", "05", "03", "08", "04"];
 
   const { actions } = useCart();
@@ -72,6 +93,22 @@ export default function Home() {
 
   return (
     <div>
+      <motion.div
+        className="fixed right-5 top-[50%] transform -translate-y-1/2 flex  flex-col items-center z-[9999]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: hasScrolled ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <span className="-rotate-90 mb-14 text-xs tracking-widest font-medium text-black text-bold origin-center inline-block transform translate-y-6">
+          SCROLL
+        </span>
+        <div className="h-20 flex justify-center">
+          <motion.div
+            className="w-0.5  bg-black origin-top"
+            style={{ scaleY }}
+          />
+        </div>
+      </motion.div>
       <section>
         <motion.div
           initial="hidden"
@@ -87,7 +124,7 @@ export default function Home() {
           </motion.div>
           <motion.div
             variants={fadeInUp}
-            transition={{ duration: 0.6 , delay: 1 }}
+            transition={{ duration: 0.6, delay: 1 }}
             className="absolute inset-0 flex justify-end"
           >
             {" "}
@@ -127,14 +164,17 @@ export default function Home() {
           <motion.div
             variants={fadeInUp}
             transition={{ duration: 0.6, delay: 2 }}
-            className="absolute z-20 top-96 left-[25%] text-black"
+            className="absolute z-20 top-72 left-[20%] text-black"
           >
             {" "}
             <h1 className="text-9xl font-bold">Corby</h1>
             <h1 className="text-9xl font-bold">Sofas</h1>
-            <p className="text-4xl opacity-55 pt-10">
+            <p className="text-3xl text-gray-500 pt-10">
               Price starting from
-              <span className="text-black underline "> $199.00</span>
+              <span className="text-black border-b-2  border-black ">
+                {" "}
+                $199.00
+              </span>
             </p>
             <motion.button
               variants={fadeInUp}
@@ -157,8 +197,11 @@ export default function Home() {
                 },
               },
             }}
-            className="-rotate-90 fixed -left-32 top-[500px] text-black flex items-center space-x-6 z-[9999]"
-            style={{ pointerEvents: "none" }} 
+            className="-rotate-90 fixed -left-32 top-[500px] text-black flex items-center space-x-6 "
+            style={{
+              pointerEvents: "none",
+              zIndex: 10000,
+            }}
           >
             {[
               { icon: <FaFacebookF />, label: "Facebook" },
@@ -404,62 +447,67 @@ export default function Home() {
         >
           {" "}
           <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6">
-            {products.map((product, index) => (
-              <motion.li
-                key={product.id}
-                variants={fadeInUp}
-                custom={index}
-                className="bg-white hover:shadow-xl rounded-xl overflow-hidden p-4 relative group transition-all duration-300"
-              >
-                <div className="relative">
-                  <a href="#">
-                    <Image
-                      src={product.image}
-                      width={200}
-                      height={200}
-                      alt={product.name}
-                      className="rounded-lg object-cover w-full"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black to-white opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
-                  </a>
+            {products &&
+              products.length > 0 &&
+              products.map((product, index) => (
+                <motion.li
+                  key={product.id}
+                  variants={fadeInUp}
+                  custom={index}
+                  className="bg-white hover:shadow-xl rounded-xl overflow-hidden p-4 relative group transition-all duration-300"
+                >
+                  <div className="relative">
+                    <a href="#">
+                      <Image
+                        src={product.image}
+                        width={200}
+                        height={200}
+                        alt={product.name}
+                        className="w-full object-cover h-80  transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 h-[50%] flex flex-col self-end bg-gradient-to-t from-black to-white opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+                    </a>
 
-                  <div className="absolute bottom-5 left-20 grid grid-cols-3 justify-center items-center text-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                    <button className="bg-white p-2 rounded-full w-14 h-14 flex justify-center items-center shadow-md opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:shadow-xl delay-300">
-                      <CiHeart size={20} />
-                    </button>
-                    <button
-                      onClick={() => actions.addToBasket(products)}
-                      className="bg-white p-2 rounded-full w-14 h-14 flex justify-center items-center shadow-md opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:shadow-xl delay-500"
+                    <div className="absolute bottom-5 left-20 grid grid-cols-3 justify-center items-center text-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                      <button className="bg-white p-2 rounded-full w-14 h-14 flex justify-center items-center shadow-md opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:shadow-xl delay-300">
+                        <CiHeart size={20} />
+                      </button>
+                      <button
+                        onClick={() => actions.addToBasket(products)}
+                        className="bg-white p-2 rounded-full w-14 h-14 flex justify-center items-center shadow-md opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:shadow-xl delay-500"
+                      >
+                        <FiShoppingBag size={20} />
+                      </button>
+                      <button className="bg-white p-2 rounded-full w-14 h-14 flex justify-center items-center shadow-md opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:shadow-xl delay-700">
+                        <FiEye size={20} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 text-center">
+                    <a
+                      href="#"
+                      className="text-lg font-semibold text-gray-800 hover:text-gray-600"
                     >
-                      <FiShoppingBag size={20} />
-                    </button>
-                    <button className="bg-white p-2 rounded-full w-14 h-14 flex justify-center items-center shadow-md opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:shadow-xl delay-700">
-                      <FiEye size={20} />
-                    </button>
+                      {product.name}
+                    </a>
+                    <div className="mt-1 text-gray-400">
+                      {product.oldPrice && (
+                        <del className="text-gray-400 mr-2">
+                          ${parseFloat(product.oldPrice).toFixed(2)}
+                        </del>
+                      )}
+                      <span className="text-xl ">
+                        ${parseFloat(product.price).toFixed(2)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="mt-4 text-center">
-                  <a
-                    href="#"
-                    className="text-lg font-semibold text-gray-800 hover:text-gray-600"
-                  >
-                    {product.name}
-                  </a>
-                  <div className="mt-1 text-gray-600">
-                    {product.oldPrice && (
-                      <del className="text-red-500 mr-2">
-                        ${product.oldPrice}
-                      </del>
-                    )}
-                    <span className="text-xl font-bold">${product.price}</span>
-                  </div>
-                </div>
-              </motion.li>
-            ))}
+                </motion.li>
+              ))}
           </ul>
         </motion.div>
       </section>
+
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -468,35 +516,6 @@ export default function Home() {
       >
         {" "}
         <div className="relative w-full  py-5 overflow-hidden">
-          <div
-            className="absolute top-0 left-0 w-1/12 h-full   z-50 "
-            style={{
-              background:
-                "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1)",
-            }}
-          ></div>
-          <div
-            className="absolute top-0 left-40 w-1/6 h-full  z-50  "
-            style={{
-              background:
-                "linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)",
-            }}
-          ></div>
-          <div
-            className="absolute top-0 right-0 w-1/12 h-full   z-50 "
-            style={{
-              background:
-                "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1)",
-            }}
-          ></div>
-          <div
-            className="absolute top-0 right-40 w-1/6 h-full   z-50 "
-            style={{
-              background:
-                "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)",
-            }}
-          ></div>
-
           <Swiper
             spaceBetween={20}
             slidesPerView="3"
@@ -509,6 +528,35 @@ export default function Home() {
             modules={[Autoplay]}
             className="w-full"
           >
+            {" "}
+            <div
+              className="absolute top-0 left-0 w-1/12 h-full   z-50 "
+              style={{
+                background:
+                  "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1)",
+              }}
+            ></div>
+            <div
+              className="absolute top-0 left-40 w-1/6 h-full  z-50  "
+              style={{
+                background:
+                  "linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)",
+              }}
+            ></div>
+            <div
+              className="absolute top-0 right-0 w-1/12 h-full   z-50 "
+              style={{
+                background:
+                  "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1)",
+              }}
+            ></div>
+            <div
+              className="absolute top-0 right-40 w-1/6 h-full   z-50 "
+              style={{
+                background:
+                  "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)",
+              }}
+            ></div>
             {offers.map((offer, index) => (
               <SwiperSlide
                 key={index}
@@ -603,35 +651,6 @@ export default function Home() {
       >
         {" "}
         <div className="relative w-full  py-5 overflow-hidden">
-          <div
-            className="absolute top-0 left-0 w-1/12 h-full   z-50 "
-            style={{
-              background:
-                "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1)",
-            }}
-          ></div>
-          <div
-            className="absolute top-0 left-40 w-1/6 h-full  z-50  "
-            style={{
-              background:
-                "linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)",
-            }}
-          ></div>
-          <div
-            className="absolute top-0 right-0 w-1/12 h-full   z-50 "
-            style={{
-              background:
-                "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1)",
-            }}
-          ></div>
-          <div
-            className="absolute top-0 right-40 w-1/6 h-full   z-50 "
-            style={{
-              background:
-                "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)",
-            }}
-          ></div>
-
           <Swiper
             spaceBetween={20}
             slidesPerView="4"
@@ -644,6 +663,34 @@ export default function Home() {
             modules={[Autoplay]}
             className="w-full"
           >
+            <div
+              className="absolute top-0 left-0 w-[300px] h-full   z-50 "
+              style={{
+                background:
+                  "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1)",
+              }}
+            ></div>
+            <div
+              className="absolute top-0 left-72 w-[400px] h-full  z-50  "
+              style={{
+                background:
+                  "linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)",
+              }}
+            ></div>
+            <div
+              className="absolute top-0 right-0 w-[300px] h-full   z-50 "
+              style={{
+                background:
+                  "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1)",
+              }}
+            ></div>
+            <div
+              className="absolute top-0 right-72 w-[400px] h-full   z-50 "
+              style={{
+                background:
+                  "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)",
+              }}
+            ></div>
             {offers2.map((offer, index) => (
               <SwiperSlide key={index} className="w-auto flex items-center">
                 <span className=" font-bold text-black text-5xl whitespace-nowrap">

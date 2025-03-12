@@ -6,11 +6,8 @@ import {
   FaTwitter,
   FaFacebookF,
   FaDribbble,
-  FaPinterestP,
-  FaYoutube,
 } from "react-icons/fa";
 import { FiMail } from "react-icons/fi";
-import { HiArrowRight } from "react-icons/hi";
 
 export default function Footer() {
   return (
@@ -70,7 +67,7 @@ export default function Footer() {
                 (item, index) => (
                   <li key={index} className="group">
                     <Link
-                      href="#"
+                      href="/shop"
                       className="text-gray-500 hover:text-white transition-colors duration-300 flex items-center"
                     >
                       <span>{item}</span>
@@ -86,21 +83,23 @@ export default function Footer() {
               Information
             </h3>
             <ul className="space-y-3">
-              {["About Us", "Contact Us", "FAQs", "Payment"].map(
-                (item, index) => (
-                  <li key={index} className="group">
-                    <Link
-                      href="#"
-                      className="text-gray-500 hover:text-white transition-colors duration-300 flex items-center"
-                    >
-                      <span>{item}</span>
-                    </Link>
-                  </li>
-                )
-              )}
+              {[
+                { name: "About Us", path: "/about" },
+                { name: "Contact Us", path: "/Contact" },
+                { name: "FAQs", path: "/FAQs" },
+                { name: "payment", path: "/FAQs" },
+              ].map((item, index) => (
+                <li key={index} className="group">
+                  <Link
+                    href={item.path}
+                    className="text-gray-500 hover:text-white transition-colors duration-300 flex items-center"
+                  >
+                    <span>{item.name}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
-
           <div className="lg:col-span-1">
             <h3 className="text-lg text-white font-bold mb-6 uppercase">
               Account
@@ -133,7 +132,7 @@ export default function Footer() {
                 <input
                   type="email"
                   placeholder="Your email address"
-                  className="w-full py-3 px-4 border border-blue-950    focus:outline-none"
+                  className="w-full py-3 px-4 border border-gray-500 opacity-35    focus:outline-none"
                   style={{ backgroundColor: "rgba(23, 33, 45, 1)" }}
                 />
                 <button
@@ -145,10 +144,7 @@ export default function Footer() {
               </div>
             </form>
             <div className="flex space-x-3">
-              <a
-                href="#"
-                className="text-gray-600 hover:text-blue-950 transition-colors duration-300"
-              >
+              <a href="#">
                 <Image
                   src="/images/footer/visa.webp"
                   alt="Visa"
@@ -156,10 +152,7 @@ export default function Footer() {
                   height={30}
                 />
               </a>
-              <a
-                href="#"
-                className="text-gray-600 hover:text-blue-950 transition-colors duration-300"
-              >
+              <a href="#">
                 <Image
                   src="/images/footer/paypal.webp"
                   alt="PayPal"
@@ -167,10 +160,7 @@ export default function Footer() {
                   height={30}
                 />
               </a>
-              <a
-                href="#"
-                className="text-gray-600 hover:text-blue-950 transition-colors duration-300"
-              >
+              <a href="#">
                 <Image
                   src="/images/footer/klarna.webp"
                   alt="Klarna"
@@ -178,10 +168,7 @@ export default function Footer() {
                   height={30}
                 />
               </a>
-              <a
-                href="#"
-                className="text-gray-600 hover:text-blue-950 transition-colors duration-300"
-              >
+              <a href="#">
                 <Image
                   src="/images/footer/way.webp"
                   alt="Way"
@@ -194,29 +181,43 @@ export default function Footer() {
         </div>
       </div>
       <div className=" border-t text-center justify-center items-center border-gray-700 mt-16 pt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-400">
-          <div className="md:col-span-1 justify-center items-center">
-            <p className="text-sm mb-2">
-              This site is protected by reCAPTCHA and the Google
-              <a href="#" className="text-blue-400 hover:text-white ml-1">privacy policy</a>
-              <span className="mx-1">and</span>
-              <a href="#" className="text-blue-400 hover:text-white">terms of service</a> apply.
-            </p>
-            <p className="text-sm">
-              © 2024 Crafto is Proudly Powered by 
-              <a href="#" className="text-blue-400 hover:text-white ml-1">ThemeZaa</a>
-            </p>
-          </div>
-          
-          <div className="md:col-span-1 flex flex-col justify-end items-end  ">
-            <span className="text-sm text-gray-500 mb-1">Need support?</span>
-            <a href="tel:+12345678910" className="text-white hover:text-blue-400 transition-colors font-medium">+1 234 567 8910</a>
-          </div>
-          
-          <div className="md:col-span-1 flex flex-col justify-center items-start ">
-            <span className="text-sm text-gray-500 mb-1">Customer care</span>
-            <a href="mailto:info@domain.com" className="text-white hover:text-blue-400 transition-colors font-medium">info@domain.com</a>
-          </div>
+        <div className="md:col-span-1 justify-start text-left ml-80 w-[600px] items-center">
+          <p className="text-sm mb-2">
+            This site is protected by reCAPTCHA and the Google
+            <a href="#" className="text-white border-b-2 ml-1">
+              privacy policy
+            </a>
+            <span className="mx-1">and</span>
+            terms of service apply.
+          </p>
+          <p className="text-sm">
+            © 2024 Crafto is Proudly Powered by
+            <a href="#" className="text-white border-b-2  ml-1">
+              ThemeZaa
+            </a>
+          </p>
         </div>
+
+        <div className="md:col-span-1 flex flex-col ml-[500px] justify-end items-start  ">
+          <span className="text-sm text-gray-500 mb-1">Need support?</span>
+          <a
+            href="tel:+12345678910"
+            className="text-white hover:text-blue-400 transition-colors font-medium"
+          >
+            +1 234 567 8910
+          </a>
+        </div>
+
+        <div className="md:col-span-1 flex flex-col justify-center items-start ">
+          <span className="text-sm text-gray-500 mb-1">Customer care</span>
+          <a
+            href="mailto:info@domain.com"
+            className="text-white hover:text-blue-400 transition-colors font-medium"
+          >
+            info@domain.com
+          </a>
+        </div>
+      </div>
     </footer>
   );
 }

@@ -1,15 +1,15 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Navbar2 from "@/components/Navbar2";
 import Footer from "@/components/footer";
-import Image from "next/image";
-import FeaturesSection from '@/app/about/components/FeaturesSeaction';
-import HeaderAbout from "@/app/about/components/HeaderAbout";
-import ParallaxSection from "@/app/about/components/imageAbout";
-import PesonAbout from "@/app/about/components/personAbout";
-export default function page() {
- 
+import LeftPage from "@/app/shop/components/leftPage";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import RightPage from "@/app/shop/components/rightPage";
+export default function Page() {
   return (
     <div>
       <section>
@@ -25,23 +25,29 @@ export default function page() {
           />
           <div className="row absolute top-40 right-[47%]">
             <div className="col-12 justify-center items-center text-center text-6xl font-bold">
-              <h1 className="">About us</h1>
+              <h1 className="">Shop</h1>
             </div>
             <div className="col-12 justify-center items-center text-center text-lg pt-5 ">
               <span className="p-2">Home</span>
               <span className="p-2">{">"}</span>
-              <span className="p-2">About us</span>
+              <span className="p-2">shop</span>
             </div>
           </div>
         </div>
       </section>
-      <HeaderAbout/>
-      <FeaturesSection />
-      <ParallaxSection />
-      <PesonAbout />
-
+      <section className="py-16 px-4">
+        <div className="container mx-auto">
+          <div className="flex flex-col lg:flex-row">
+            <div className="lg:w-1/5 w-full lg:pr-8 mb-8 lg:mb-0">
+              <LeftPage />
+            </div>
+            <div className="lg:w-4/5 w-full">
+              <RightPage />
+            </div>
+          </div>
+        </div>
+      </section>
       <Footer />
     </div>
   );
 }
-
